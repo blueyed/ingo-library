@@ -94,12 +94,14 @@ function! ingo#avoidprompt#TruncateTo( text, length )
     let l:text = a:text
     try
 	if ingo#strdisplaywidth#HasMoreThan(l:text, a:length)
-	    " We need 3 characters for the '...'; 1 must be added to both lengths
+	    " We need 1 character for the '…'; 1 must be added to both lengths
 	    " because columns start at 1, not 0.
-	    let l:frontCol = a:length / 2
-	    let l:backCol  = (a:length % 2 == 0 ? (l:frontCol - 1) : l:frontCol)
+	    let l:ellipsis = get(g:, 'avoidprompt_ellipsis', '…')
+	    let l:length = a:length - strchars(l:ellipsis) + 1
+	    let l:frontCol = l:length / 2
+	    let l:backCol  = (l:length % 2 == 0 ? (l:frontCol - 1) : l:frontCol)
 "**** echomsg '**** ' a:length ':' l:frontCol '-' l:backCol
-	    let l:text = ingo#strdisplaywidth#strleft(l:text, l:frontCol) . '...' . ingo#strdisplaywidth#strright(l:text, l:backCol)
+	    let l:text = ingo#strdisplaywidth#strleft(l:text, l:frontCol) . l:ellipsis . ingo#strdisplaywidth#strright(l:text, l:backCol)
 	endif
     finally
 	let &l:tabstop = l:save_ts
